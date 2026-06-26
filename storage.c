@@ -225,6 +225,18 @@ void append_device_details(JsonNode *userlist, char *user, char *device)
 	last = json_mkobject();
 	if (json_copy_from_file(last, path) == TRUE) {
 		JsonNode *jtst;
+		struct stat st;
+
+		/*
+		 * The 'last' file is (re)written each time we accept a location for
+		 * this device, so its mtime is "when the recorder last heard from it".
+		 * Expose that as isorcv so clients have a device-independent freshness
+		 * signal (e.g. the iOS app doesn't send created_at).
+		 */
+		if (stat(path, &st) == 0) {
+			json_append_member(last, "isorcv", json_mkstring(isotime(st.st_mtime)));
+			json_append_member(last, "disprcv", json_mkstring(disptime(st.st_mtime)));
+		}
 
 		if ((jtst = json_find_member(last, "tst")) != NULL) {
 			json_append_member(last, "isotst", json_mkstring(isotime(jtst->number_)));
