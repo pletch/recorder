@@ -722,7 +722,14 @@ static bool is_newer_than_last(JsonNode *json)
 				if (tst != NULL) {
 					double last = number(lastrec, "tst");
 					double current = number(json, "tst");
-					is_newer = last < current;
+					/*
+					 * Accept an equal tst as still-current so a re-published fix
+					 * (e.g. a stationary ping that re-sends the same GPS fix with
+					 * a fresh created_at) refreshes the stored 'last' record
+					 * instead of being skipped. Strictly-older tst is still
+					 * rejected, preserving the out-of-order guard.
+					 */
+					is_newer = last <= current;
 				}
 			}
 			json_delete(last_array);
