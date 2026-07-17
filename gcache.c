@@ -319,12 +319,19 @@ void gcache_dump(char *path, char *lmdbname)
 	/* -1 because we 0-terminate strings in values */
 	while ((rc = mdb_cursor_get(cursor, &key, &data, MDB_NEXT)) == 0) {
 
-		/* Don't dump mdb keys if we seem to not have JSON data */
-		if (strchr((char *)data.mv_data, '{') != NULL) {
-			printf("%*.*s %*.*s\n",
-				(int)key.mv_size, (int)key.mv_size, (char *)key.mv_data,
-				(int)data.mv_size - 1, (int)data.mv_size - 1, (char *)data.mv_data);
+		/* Don't dump mdb keys if they are internal db names */
+		if ((key.mv_size == 7 && strncmp(key.mv_data, "friends", 7) == 0) ||
+		    (key.mv_size == 2 && strncmp(key.mv_data, "wp", 2) == 0) ||
+		    (key.mv_size == 5 && strncmp(key.mv_data, "luadb", 5) == 0) ||
+#ifdef WITH_ENCRYPT
+		    (key.mv_size == 4 && strncmp(key.mv_data, "keys", 4) == 0) ||
+#endif
+		    (key.mv_size == 9 && strncmp(key.mv_data, "topic2tid", 9) == 0)) {
+			continue;
 		}
+		printf("%*.*s %*.*s\n",
+			(int)key.mv_size, (int)key.mv_size, (char *)key.mv_data,
+			(int)data.mv_size - 1, (int)data.mv_size - 1, (char *)data.mv_data);
 	}
 	mdb_cursor_close(cursor);
 	mdb_txn_commit(txn);
