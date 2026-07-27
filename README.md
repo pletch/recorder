@@ -322,7 +322,14 @@ The following configuration variables can be used to tweak settings. Defaults ar
 
 ## Reverse proxy
 
-Running the Recorder protected by an Nginx or Apache server is possible and is the only recommended method if you want to serve data behind localhost. The snippets below show how to do it, but you would also add authentication to them - or at least, to everything but the views. The snippet for HTTP mode shows an example of how to do this.
+Running the Recorder protected by an Nginx or Apache server is possible and is
+the only recommended method if you want to serve data behind localhost. The
+snippets below shows the basics of how to set this up, but any real deployment
+should also use TLS. Without TLS, any data is transmitted in clear over the
+network.
+
+Additionally, authentication should be enabled, as shown by the snippet for
+HTTP mode.
 
 ### nginx
 
@@ -1020,6 +1027,11 @@ The user/device separator in the array's strings may be a slash (`/`), a dash (`
 If compiled with `WITH_ENCRYPT` support (this is the default in our packages), the Recorder will handle messages from OwnTracks [devices which support payload encryption](http://owntracks.org/booklet/features/encrypt/). Each user / device requires a secret key which is configured on the device and which must be configured on the Recorder host in order for the Recorder to be able to decrypt the payloads.
 
 Upon successful decryption, the Recorder processes the original (device-transmitted) JSON and stores the result in plain (i.e. un-encrypted) form in the store, adding a `"_decrypted":true` tag to the JSON.
+
+## Security
+
+The built-in HTTP server only handles plain-text HTTP. Use some form of
+transport layer encryption (e.g.: TLS) before exposing it to public networks.
 
 ## Tips and Tricks
 
