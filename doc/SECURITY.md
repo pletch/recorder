@@ -6,9 +6,10 @@ The program was initially an MQTT client only so protected by an MQTT broker. Th
 
 In MQTT mode, the Recorder has no open incoming TCP ports -- it connects out to an MQTT broker (either TCP/1883 or TCP/8883, configurable) and optionally to a geo-location service (TCP/443, likewise configurable).
 
+
 ## file system
 
-Data is stored by the Recorder in either plain files or in an LMDB database, the latter for geo-lookups and sundry other data (see [STORE](store.md)]. Some of this data includes possible payload encryption keys (see below) so the database ought to be well protected.
+Data is stored by the Recorder in either plain files or in an LMDB database, the latter for geo-lookups and sundry other data (see [STORE](store.md)]. Some of this data includes possible payload encryption keys (see below) so the database ought to be well protected. Both the Recorder (`ot-recorder`), and its `ocat` utility are installed SUID by default; it is assumed that these utilities will be used on single-user systems fronted by proxies. If this is undesirable, it is possible to install these programs with different permissions.
 
 Any user which has access to the files into which the OwnTracks Recorder stores data can obviously read that data.
 

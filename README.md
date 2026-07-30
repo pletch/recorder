@@ -1033,6 +1033,8 @@ Upon successful decryption, the Recorder processes the original (device-transmit
 The built-in HTTP server only handles plain-text HTTP. Use some form of
 transport layer encryption (e.g.: TLS) before exposing it to public networks.
 
+See also: [SECURITY.md](doc/SECURITY.md).
+
 ## Tips and Tricks
 
 ### Gatewaying HTTP to MQTT

@@ -1,8 +1,7 @@
 include config.mk
 
 CFLAGS	+= -Wall -DNS_ENABLE_IPV6
-LIBS	= $(MORELIBS) -lm
-LIBS 	+= -lcurl -lconfig
+LIBS	= $(MORELIBS)
 
 TARGETS=
 OTR_OBJS = json.o \
@@ -20,7 +19,15 @@ OTR_EXTRA_OBJS =
 
 CFLAGS += -DGHASHPREC=$(GHASHPREC)
 
-LIBS += -llmdb
+CFLAGS += $(LMDB_CFLAGS)
+LIBS += $(LMDB_LIBS)
+
+CFLAGS += $(LIBCONFIG_CFLAGS)
+LIBS += $(LIBCONFIG_LIBS)
+
+CFLAGS += $(LIBCURL_CFLAGS)
+LIBS += $(LIBCURL_LIBS)
+
 LIBS += -lpthread
 
 define CPP_CONDITION
@@ -31,10 +38,12 @@ true \n
 #endif' | $(CPP) -P - >/dev/null 2>&1 && echo yes
 endef
 
+LIBLM = no
+
 ifeq ($(WITH_MQTT),yes)
 	CFLAGS += -DWITH_MQTT=1
 	CFLAGS += $(MOSQUITTO_CFLAGS)
-	LIBS += $(MOSQUITTO_LIBS) -lm
+	LIBS += $(MOSQUITTO_LIBS)
 endif
 
 ifeq ($(WITH_PING),yes)
@@ -45,6 +54,8 @@ ifeq ($(WITH_LUA),yes)
 	CFLAGS += -DWITH_LUA=1 $(LUA_CFLAGS)
 	LIBS   += $(LUA_LIBS)
 	OTR_OBJS += hooks.o
+else
+	LIBLM = yes
 endif
 
 ifeq ($(WITH_ENCRYPT),yes)
@@ -77,6 +88,10 @@ ifeq ($(WITH_TZ),yes)
 	CFLAGS += -DTZDATADB=\"$(TZDATADB)\"
 	OTR_EXTRA_OBJS += zonedetect.o
 	OCAT_EXTRA_OBJS += zonedetect.o
+endif
+
+ifeq ($(LIBLM),yes)
+	LIBS += -lm
 endif
 
 ifeq ($(JSON_INDENT),yes)
@@ -114,7 +129,7 @@ base64.o: base64.h base64.c
 	$(CC) $(CFLAGS) -Wno-unused-result -Wno-uninitialized -c base64.c
 gcache.o: gcache.c gcache.h json.h
 misc.o: misc.c misc.h udata.h
-http.o: http.c mongoose.h util.h http.h storage.h version.h hooks.h
+http.o: http.c mongoose.h util.h http.h storage.h version.h hooks.h config.mk Makefile
 util.o: util.c util.h
 mongoose.o: mongoose.c mongoose.h
 ocat.o: ocat.c storage.h util.h version.h config.mk Makefile
