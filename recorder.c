@@ -1067,11 +1067,13 @@ void handle_message(void *userdata, char *topic, char *payload, size_t payloadle
 	}
 
 #ifdef WITH_TZ
-	if ((j = json_find_member(json, "tzname")) == NULL) {
-		char* tz_str = ZDHelperSimpleLookupString(zdb, lat, lon);
-		if (tz_str) {
-			json_append_member(json, "tzname", json_mkstring(tz_str));
-			ZDHelperSimpleLookupStringFree(tz_str);
+	if (zdb != NULL) {
+		if ((j = json_find_member(json, "tzname")) == NULL) {
+			char* tz_str = ZDHelperSimpleLookupString(zdb, lat, lon);
+			if (tz_str) {
+				json_append_member(json, "tzname", json_mkstring(tz_str));
+				ZDHelperSimpleLookupStringFree(tz_str);
+			}
 		}
 	}
 #endif

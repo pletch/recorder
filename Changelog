@@ -1,4 +1,14 @@
 
+2026-08-09 version 1.0.2
+- FIX: Makefile / config.mk.in remove dup libs
+- UPD: packages will henceforth be built with WITH_KILL=no per default (#573)
+- FIX: ocat --dump will not dump internal db names (#572)
+- FIX: add referrer meta tag to maps (#570, #571)
+- FIX: option --noskipdemo was incorrectly written as --skipdemo
+- NEW: Support for Ubuntu 25.10
+- NEW: Lookup timezone when a new location is recorded and store it (#561)
+- UPD: old package signing key has been removed (#551)
+
 2025-08-12 version 1.0.1
 - FIX: ocat JSON output now supports emitting fields which are arrays/lists (#542)
 - FIX: Add proper error message to revgeo lookup (#541)
