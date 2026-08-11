@@ -18,11 +18,23 @@ DOCROOT = /usr/share/owntracks/recorder/htdocs
 TZDATADB = /usr/share/owntracks/recorder/timezone16.bin
 GHASHPREC = 7
 JSON_INDENT ?= no
-MOSQUITTO_CFLAGS =
-MOSQUITTO_LIBS   = -lmosquitto
-LUA_CFLAGS = `pkg-config --cflags lua`
-LUA_LIBS   = `pkg-config --libs lua`
-SODIUM_CFLAGS = `pkg-config --cflags libsodium`
-SODIUM_LIBS   = `pkg-config --libs libsodium`
 
 GEOCODE_TIMEOUT = 4000
+
+MOSQUITTO_CFLAGS = `$(PKG_CONFIG) --cflags libmosquitto`    #  libcjson
+MOSQUITTO_LIBS   = `$(PKG_CONFIG) --libs libmosquitto`      #  libcjson
+
+LUA_CFLAGS = `$(PKG_CONFIG) --cflags lua`
+LUA_LIBS   = `$(PKG_CONFIG) --libs lua` -lm
+
+SODIUM_CFLAGS = `$(PKG_CONFIG) --cflags libsodium`
+SODIUM_LIBS   = `$(PKG_CONFIG) --libs libsodium`
+
+LMDB_CFLAGS = `$(PKG_CONFIG) --cflags lmdb`
+LMDB_LIBS   = `$(PKG_CONFIG) --libs lmdb`
+
+LIBCONFIG_CFLAGS = `$(PKG_CONFIG) --cflags libconfig`
+LIBCONFIG_LIBS   = `$(PKG_CONFIG) --libs libconfig`
+
+LIBCURL_CFLAGS = `$(PKG_CONFIG) --cflags libcurl`
+LIBCURL_LIBS   = `$(PKG_CONFIG) --libs libcurl`

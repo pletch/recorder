@@ -1,4 +1,12 @@
 
+2026-08-10 version 1.0.3
+- FIX: protect against a non-existing or unreadable ZDB (#579).
+     The timezone16.bin has to be placed into the variable configured as
+     TZDATADB in config.mk, assuming WITH_TZ is yes. For the Docker image,
+     TZDATADB=/config/timezone16.bin meaning the file is searched in the
+     /config volume. (New installations get that automatically, containers
+     created pre version 1.0.2 might need manual intervention.
+
 2026-08-09 version 1.0.2
 - FIX: Makefile / config.mk.in remove dup libs
 - UPD: packages will henceforth be built with WITH_KILL=no per default (#573)

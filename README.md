@@ -97,15 +97,7 @@ Debian 11 "Bullseye":
 
 Debian 12 "Bookworm":
 
-- install with:
-
-   ```
-   curl --no-progress-meter https://raw.githubusercontent.com/owntracks/recorder/master/etc/repo-v2.owntracks.org.gpg.key | sudo tee /etc/apt/trusted.gpg.d/owntracks.asc
-   
-   echo "deb  http://repo.owntracks.org/debian bookworm main" | sudo tee /etc/apt/sources.list.d/owntracks.list > /dev/null
-   sudo apt update
-   sudo apt install ot-recorder
-   ```
+- we no longer build for this distribution, but you should be able to compile from source or use older versions from the package repository.
 
 Debian 13 "Trixie":
 
