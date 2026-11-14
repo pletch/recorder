@@ -74,7 +74,8 @@ static unsigned char border40x40png[] = {
 /*
  * Return a lowercased copy of a GET/POST parameter or NULL. The parameter
  * may be overriden by an HTTP header called X-Limit-<fieldname>.
- * Caller must free if return is non-NULL.
+ * Caller must free if return is non-NULL. Return NULL if the field contains
+ * relative path ("..") or glob ('*', etc.) characters.
  */
 
 static char *field(struct mg_connection *conn, char *fieldname)
@@ -85,12 +86,24 @@ static char *field(struct mg_connection *conn, char *fieldname)
 	snprintf(buf, sizeof(buf), "X-Limit-%s", fieldname);
 
 	if ((h = (char *)mg_get_header(conn, buf)) != NULL) {
+		if ((strstr(h, "..") != NULL) ||
+			(strstr(h, "*") != NULL) ||
+			(strstr(h, "?") != NULL) ||
+			(strstr(h, "[") != NULL)) {
+			return (NULL);
+		}
 		p = strdup(h);
 		lowercase(p);
 		return (p);
 	}
 
 	if ((ret = mg_get_var(conn, fieldname, buf, sizeof(buf))) > 0) {
+		if ((strstr(buf, "..") != NULL) ||
+			(strstr(buf, "*") != NULL) ||
+			(strstr(buf, "?") != NULL) ||
+			(strstr(buf, "[") != NULL)) {
+			return (NULL);
+		}
 		p = strdup(buf);
 		lowercase(p);
 		return (p);
@@ -1050,28 +1063,6 @@ static int dispatch(struct mg_connection *conn, const char *uri)
 	d	  = field(conn, "device");
 	time_from = field(conn, "from");
 	time_to	  = field(conn, "to");
-
-#if WITH_KILL
-	if (nparts == 1 && !strcmp(uparts[0], "kill")) {
-		JsonNode *deleted;
-
-		if (!u || !*u || !d || !*d) {
-			CLEANUP;
-			mg_send_status(conn, 416);
-			mg_printf_data(conn, "user and device are required\n");
-			return (MG_TRUE);
-		}
-
-		if ((deleted = kill_datastore(u, d)) == NULL) {
-			mg_send_status(conn, 416);
-			mg_printf_data(conn, "cannot kill data for %s/%s\n", u, d);
-			CLEANUP;
-			return (MG_TRUE);
-		}
-		CLEANUP;
-		return (json_response(conn, deleted));
-	}
-#endif /* WITH_KILL */
 
 	if (nparts == 1 && !strcmp(uparts[0], "version")) {
 		JsonNode *json = json_mkobject();
